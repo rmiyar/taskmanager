@@ -1,0 +1,17 @@
+{% extends "account/base_auth.html" %}
+{% block title %}Cerrar sesión - TaskMaster{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <p style="margin-bottom: 30px; font-size: 1.1rem;">¿Estás seguro de que quieres cerrar sesión?</p>
+
+    <form method="POST" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn">Cerrar sesión</button>
+    </form>
+
+    <div class="auth-footer">
+        <a href="javascript:history.back()">Cancelar</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "account/base_auth.html" %}
+{% block title %}Crear cuenta - TaskMaster{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <small style="color: #666; display: block; margin-top: 5px;">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+        <div style="color: red; font-size: 0.9rem; margin-top: 5px;">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+    <div style="color: red; margin-bottom: 20px;">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn">Crear cuenta</button>
+</form>
+
+<div class="auth-footer">
+    ¿Ya tienes cuenta? <a href="{% url 'account_login' %}">Inicia sesión</a>
+</div>
+{% endblock %}

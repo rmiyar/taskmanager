@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TaskMaster{% endblock %}</title>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3648c5;
+            --background: #f3f6fb;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 620px; /* más ancho */
+            padding: 60px 70px; /* más espacio interno */
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            animation: fadeIn 0.6s ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #dcdfe6;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 35px;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                max-width: 90%;
+                padding: 40px 30px;
+                border-radius: 16px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="auth-container">
+        <h1>TaskMaster</h1>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

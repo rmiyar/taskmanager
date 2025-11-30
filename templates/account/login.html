@@ -1,0 +1,32 @@
+{% extends "account/base_auth.html" %}
+{% block title %}Iniciar sesión - TaskMaster{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+        <div style="color: red; font-size: 0.9rem; margin-top: 5px;">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+    <div style="color: red; margin-bottom: 20px;">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn">Iniciar sesión</button>
+</form>
+
+<div class="auth-footer">
+    ¿No tienes cuenta? <a href="{% url 'account_signup' %}">Regístrate</a>
+</div>
+{% endblock %}

@@ -1,0 +1,357 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - TaskMaster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3649c8;
+            --text: #222;
+            --muted: #666;
+            --bg: #eef1f7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        header a {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 2.5rem auto;
+            width: 90%;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .task-item {
+            background: white;
+            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            transition: .2s ease;
+        }
+
+        .task-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .high-priority {
+            border-left-color: #e63946;
+        }
+
+        .medium-priority {
+            border-left-color: #fca311;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .priority-alta {
+            background: #e63946;
+        }
+
+        .priority-media {
+            background: #fca311;
+        }
+
+        .priority-baja {
+            background: #4361ee;
+        }
+
+        /* CHECKBOX MODERNO */
+        .check-modern {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--primary);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .25s ease;
+        }
+
+        .check-modern.checked {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        .check-modern svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .check-modern.checked svg {
+            opacity: 1;
+        }
+
+        .task-done {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .check-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        footer {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .nav-item {
+            font-size: 1.7rem;
+            color: var(--muted);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 50px;
+            background: var(--primary);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>TaskMaster</h1>
+        <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+    </header>
+
+    <main>
+
+        <div class="status-bar">
+            <span>📅 Hoy, {{ today|date:"d M Y" }}</span>
+            <span>Usuario: {{ request.user.email }}</span>
+        </div>
+
+        <!-- TAREAS DE HOY -->
+        <div class="page-title">Tareas de hoy</div>
+
+        <div class="tasks-grid">
+            {% for task in tasks_today %}
+            <div
+                class="task-item 
+            {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
+
+                <span class="priority-badge 
+                {% if task.priority == 'Alta' %}priority-alta
+                {% elif task.priority == 'Media' %}priority-media
+                {% else %}priority-baja{% endif %}">
+                    {{ task.priority }}
+                </span>
+
+                <div class="check-wrapper">
+                    <div class="check-modern {% if task.completed %}checked{% endif %}"
+                        onclick="window.location.href='{% url 'toggle_task' task.id %}'">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+
+                    <h3 class="{% if task.completed %}task-done{% endif %}">
+                        {{ task.title }}
+                    </h3>
+                </div>
+
+                <small>{{ task.time }} - {{ task.description|default:"Sin descripción" }}</small>
+            </div>
+
+            {% empty %}
+            <div class="task-item">
+                <h3>🎉 Sin tareas para hoy</h3>
+                <small>Usa el botón + para crear una tarea</small>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- PRÓXIMAS TAREAS -->
+        <div class="page-title" style="margin-top: 3rem;">Próximas tareas</div>
+
+        <div class="tasks-grid">
+            {% for task in tasks_upcoming %}
+            <div
+                class="task-item 
+            {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
+
+                <span class="priority-badge 
+                {% if task.priority == 'Alta' %}priority-alta
+                {% elif task.priority == 'Media' %}priority-media
+                {% else %}priority-baja{% endif %}">
+                    {{ task.priority }}
+                </span>
+
+                <div class="check-wrapper">
+                    <div class="check-modern {% if task.completed %}checked{% endif %}"
+                        onclick="window.location.href='{% url 'toggle_task' task.id %}'">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+
+                    <h3 class="{% if task.completed %}task-done{% endif %}">
+                        {{ task.title }}
+                    </h3>
+                </div>
+
+                <small>
+                    {{ task.date|date:"d M Y" }} — {{ task.time }} |
+                    {{ task.description|default:"Sin descripción" }}
+                </small>
+            </div>
+
+            {% empty %}
+            <div class="task-item">
+                <h3>✨ No hay tareas próximas</h3>
+                <small>Organiza nuevas tareas con el botón +</small>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+
+    <a href="{% url 'create_task' %}" class="fab">+</a>
+
+    <footer>
+        <div class="nav-bar">
+            <div class="nav-item active">🏠</div>
+            <div class="nav-item" onclick="window.location.href='{% url 'calendar_view' %}'">📅</div>
+            <div class="nav-item" onclick="window.location.href='{% url 'create_task' %}'">➕</div>
+            <div class="nav-item" onclick="window.location.href='{% url 'reminders' %}'">🔔</div>
+            <div class="nav-item" onclick="window.location.href='{% url 'edit_profile' %}'">👤</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+            }
+
+            setInterval(checkReminders, 60000); // Check every minute
+        });
+
+        function checkReminders() {
+            fetch("{% url 'check_reminders' %}")
+                .then(response => response.json())
+                .then(data => {
+                    data.tasks.forEach(task => {
+                        if (Notification.permission === "granted") {
+                            new Notification("Recordatorio de Tarea", {
+                                body: `Tu tarea "${task.title}" vence a las ${task.time}`,
+                                icon: "/static/img/icon.png" // Optional
+                            });
+                        } else {
+                            // Fallback alert if notifications not granted
+                            alert(`Recordatorio: Tu tarea "${task.title}" vence a las ${task.time}`);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error checking reminders:', error));
+        }
+    </script>
+
+</body>
+
+</html>

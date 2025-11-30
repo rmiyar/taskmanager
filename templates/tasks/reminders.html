@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Recordatorios - TaskMaster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3649c8;
+            --text: #222;
+            --muted: #666;
+            --bg: #eef1f7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .frame {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .screen-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        h3 {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        select,
+        input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="frame">
+
+        <div class="screen-title">Configuración de Recordatorios</div>
+
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>📶</span>
+        </div>
+
+        <h3>Recordatorios</h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Notificaciones push</label>
+                <select name="push_notifications">
+                    <option value="1" {% if settings.push_notifications %}selected{% endif %}>Activadas</option>
+                    <option value="0" {% if not settings.push_notifications %}selected{% endif %}>Desactivadas</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Notificaciones por email</label>
+                <select name="email_notifications">
+                    <option value="1" {% if settings.email_notifications %}selected{% endif %}>Activadas</option>
+                    <option value="0" {% if not settings.email_notifications %}selected{% endif %}>Desactivadas</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Recordatorio previo</label>
+                <select name="reminder_time">
+                    <option value="5" {% if settings.reminder_time == 5 %}selected{% endif %}>5 minutos antes</option>
+                    <option value="15" {% if settings.reminder_time == 15 %}selected{% endif %}>15 minutos antes</option>
+                    <option value="30" {% if settings.reminder_time == 30 %}selected{% endif %}>30 minutos antes</option>
+                    <option value="60" {% if settings.reminder_time == 60 %}selected{% endif %}>1 hora antes</option>
+                    <option value="1440" {% if settings.reminder_time == 1440 %}selected{% endif %}>1 día antes</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Horario silencioso</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="time" name="quiet_start" value="{{ settings.quiet_start|time:'H:i' }}">
+                    <span>a</span>
+                    <input type="time" name="quiet_end" value="{{ settings.quiet_end|time:'H:i' }}">
+                </div>
+            </div>
+            <a href="{% url 'test_email' %}" class="btn" 
+   style="background:#28a745; margin-top:10px; display:block; text-align:center;">
+    Probar envío de correo
+</a>
+
+            <button class="btn">Guardar Configuración</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
