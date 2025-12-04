@@ -18,6 +18,7 @@ class Task(models.Model):
         default='Baja',
         verbose_name="Prioridad"
     )
+    reminder_sent = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
     completed = models.BooleanField(default=False)
 

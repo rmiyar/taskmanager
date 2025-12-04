@@ -20,20 +20,49 @@
             font-family: 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
             margin: 0;
-            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #222;
+        }
+
+        /* HEADER */
+        header {
+            background: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        header a {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* MAIN */
+        main {
+            flex: 1;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
         .frame {
             background: white;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 2rem;
-            border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
 
         .screen-title {
@@ -41,18 +70,19 @@
             font-weight: bold;
             text-align: center;
             margin-bottom: 8px;
+            color: var(--primary);
         }
 
         .status-bar {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
             font-size: 0.9rem;
             color: var(--muted);
+            margin-bottom: 20px;
         }
 
         h3 {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 1.1rem;
             color: var(--primary);
             margin-bottom: 15px;
@@ -90,23 +120,40 @@
             font-size: 1rem;
             cursor: pointer;
             margin-top: 10px;
+            text-align: center;
+            display: block;
         }
 
         .btn:hover {
             background: var(--primary-dark);
         }
+
+        .btn-green {
+            background: #28a745 !important;
+        }
+
+        .btn-green:hover {
+            background: #1f8a35 !important;
+        }
+
     </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
+<header>
+    <h1>TaskMaster</h1>
+    <a href="{% url 'dashboard' %}">← Volver</a>
+</header>
+
+<main>
     <div class="frame">
 
         <div class="screen-title">Configuración de Recordatorios</div>
 
         <div class="status-bar">
-            <span>9:41</span>
-            <span>📶</span>
+            <span>{{ request.user.email }}</span>
         </div>
 
         <h3>Recordatorios</h3>
@@ -149,15 +196,13 @@
                     <input type="time" name="quiet_end" value="{{ settings.quiet_end|time:'H:i' }}">
                 </div>
             </div>
-            <a href="{% url 'test_email' %}" class="btn" 
-   style="background:#28a745; margin-top:10px; display:block; text-align:center;">
-    Probar envío de correo
-</a>
-
+            <!-- Guardar -->
             <button class="btn">Guardar Configuración</button>
+
         </form>
+
     </div>
+</main>
 
 </body>
-
 </html>

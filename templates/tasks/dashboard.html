@@ -123,7 +123,6 @@
             background: #4361ee;
         }
 
-        /* CHECKBOX MODERNO */
         .check-modern {
             width: 22px;
             height: 22px;
@@ -212,146 +211,147 @@
 
 <body>
 
-    <header>
-        <h1>TaskMaster</h1>
-        <a href="{% url 'account_logout' %}">Cerrar sesión</a>
-    </header>
+<header>
+    <h1>TaskMaster</h1>
+    <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+</header>
 
-    <main>
+<main>
 
-        <div class="status-bar">
-            <span>📅 Hoy, {{ today|date:"d M Y" }}</span>
-            <span>Usuario: {{ request.user.email }}</span>
-        </div>
+    <div class="status-bar">
+        <span>📅 Hoy, {{ today|date:"d M Y" }}</span>
+        <span>Usuario: {{ request.user.email }}</span>
+    </div>
 
-        <!-- TAREAS DE HOY -->
-        <div class="page-title">Tareas de hoy</div>
+    <div class="page-title">Tareas de hoy</div>
 
-        <div class="tasks-grid">
-            {% for task in tasks_today %}
-            <div
-                class="task-item 
-            {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
+    <div class="tasks-grid">
+        {% for task in tasks_today %}
+        <div class="task-item {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
 
-                <span class="priority-badge 
+            <span class="priority-badge 
                 {% if task.priority == 'Alta' %}priority-alta
                 {% elif task.priority == 'Media' %}priority-media
                 {% else %}priority-baja{% endif %}">
-                    {{ task.priority }}
-                </span>
+                {{ task.priority }}
+            </span>
 
-                <div class="check-wrapper">
-                    <div class="check-modern {% if task.completed %}checked{% endif %}"
-                        onclick="window.location.href='{% url 'toggle_task' task.id %}'">
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
-
-                    <h3 class="{% if task.completed %}task-done{% endif %}">
-                        {{ task.title }}
-                    </h3>
+            <div class="check-wrapper">
+                <div class="check-modern {% if task.completed %}checked{% endif %}"
+                    onclick="window.location.href='{% url 'toggle_task' task.id %}'">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                 </div>
 
-                <small>{{ task.time }} - {{ task.description|default:"Sin descripción" }}</small>
+                <h3 class="{% if task.completed %}task-done{% endif %}">
+                    {{ task.title }}
+                </h3>
             </div>
 
-            {% empty %}
-            <div class="task-item">
-                <h3>🎉 Sin tareas para hoy</h3>
-                <small>Usa el botón + para crear una tarea</small>
-            </div>
-            {% endfor %}
+            <small>{{ task.time }} - {{ task.description|default:"Sin descripción" }}</small>
         </div>
 
-        <!-- PRÓXIMAS TAREAS -->
-        <div class="page-title" style="margin-top: 3rem;">Próximas tareas</div>
+        {% empty %}
+        <div class="task-item">
+            <h3>🎉 Sin tareas para hoy</h3>
+            <small>Usa el botón + para crear una tarea</small>
+        </div>
+        {% endfor %}
+    </div>
 
-        <div class="tasks-grid">
-            {% for task in tasks_upcoming %}
-            <div
-                class="task-item 
-            {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
 
-                <span class="priority-badge 
+    <!-- Próximas tareas -->
+    <div class="page-title" style="margin-top: 3rem;">Próximas tareas</div>
+
+    <div class="tasks-grid">
+        {% for task in tasks_upcoming %}
+        <div class="task-item {% if task.priority == 'Alta' %}high-priority{% elif task.priority == 'Media' %}medium-priority{% endif %}">
+
+            <span class="priority-badge 
                 {% if task.priority == 'Alta' %}priority-alta
                 {% elif task.priority == 'Media' %}priority-media
                 {% else %}priority-baja{% endif %}">
-                    {{ task.priority }}
-                </span>
+                {{ task.priority }}
+            </span>
 
-                <div class="check-wrapper">
-                    <div class="check-modern {% if task.completed %}checked{% endif %}"
-                        onclick="window.location.href='{% url 'toggle_task' task.id %}'">
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
-
-                    <h3 class="{% if task.completed %}task-done{% endif %}">
-                        {{ task.title }}
-                    </h3>
+            <div class="check-wrapper">
+                <div class="check-modern {% if task.completed %}checked{% endif %}"
+                    onclick="window.location.href='{% url 'toggle_task' task.id %}'">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                 </div>
 
-                <small>
-                    {{ task.date|date:"d M Y" }} — {{ task.time }} |
-                    {{ task.description|default:"Sin descripción" }}
-                </small>
+                <h3 class="{% if task.completed %}task-done{% endif %}">
+                    {{ task.title }}
+                </h3>
             </div>
 
-            {% empty %}
-            <div class="task-item">
-                <h3>✨ No hay tareas próximas</h3>
-                <small>Organiza nuevas tareas con el botón +</small>
-            </div>
-            {% endfor %}
+            <small>
+                {{ task.date|date:"d M Y" }} — {{ task.time }} |
+                {{ task.description|default:"Sin descripción" }}
+            </small>
         </div>
 
-    </main>
-
-    <a href="{% url 'create_task' %}" class="fab">+</a>
-
-    <footer>
-        <div class="nav-bar">
-            <div class="nav-item active">🏠</div>
-            <div class="nav-item" onclick="window.location.href='{% url 'calendar_view' %}'">📅</div>
-            <div class="nav-item" onclick="window.location.href='{% url 'create_task' %}'">➕</div>
-            <div class="nav-item" onclick="window.location.href='{% url 'reminders' %}'">🔔</div>
-            <div class="nav-item" onclick="window.location.href='{% url 'edit_profile' %}'">👤</div>
+        {% empty %}
+        <div class="task-item">
+            <h3>✨ No hay tareas próximas</h3>
+            <small>Organiza nuevas tareas con el botón +</small>
         </div>
-    </footer>
+        {% endfor %}
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if ("Notification" in window) {
-                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-                    Notification.requestPermission();
-                }
-            }
+</main>
 
-            setInterval(checkReminders, 60000); // Check every minute
-        });
+<a href="{% url 'create_task' %}" class="fab">+</a>
 
-        function checkReminders() {
-            fetch("{% url 'check_reminders' %}")
-                .then(response => response.json())
-                .then(data => {
-                    data.tasks.forEach(task => {
-                        if (Notification.permission === "granted") {
-                            new Notification("Recordatorio de Tarea", {
-                                body: `Tu tarea "${task.title}" vence a las ${task.time}`,
-                                icon: "/static/img/icon.png" // Optional
-                            });
-                        } else {
-                            // Fallback alert if notifications not granted
-                            alert(`Recordatorio: Tu tarea "${task.title}" vence a las ${task.time}`);
-                        }
-                    });
-                })
-                .catch(error => console.error('Error checking reminders:', error));
+<footer>
+    <div class="nav-bar">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item" onclick="window.location.href='{% url 'calendar_view' %}'">📅</div>
+        <div class="nav-item" onclick="window.location.href='{% url 'create_task' %}'">➕</div>
+        <div class="nav-item" onclick="window.location.href='{% url 'reminders' %}'">🔔</div>
+        <div class="nav-item" onclick="window.location.href='{% url 'edit_profile' %}'">👤</div>
+    </div>
+</footer>
+
+<!-- 🔥 INTEGRACIÓN COMPLETA DE RECORDATORIOS AUTOMÁTICOS -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Solicitar permiso para notificaciones push
+    if ("Notification" in window) {
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
         }
-    </script>
+    }
+
+    // Revisar recordatorios cada 30 segundos
+    setInterval(checkReminders, 30000);
+});
+
+function checkReminders() {
+    fetch("{% url 'check_due_tasks' %}")
+        .then(response => response.json())
+        .then(data => {
+            data.tasks.forEach(task => {
+
+                // Notificación push nativa
+                if (Notification.permission === "granted") {
+                    new Notification("🔔 Recordatorio de Tarea", {
+                        body: `Tu tarea "${task.title}" es a las ${task.time}`,
+                        icon: "/static/img/icon.png"
+                    });
+                } else {
+                    alert(`🔔 Recordatorio:\nTu tarea "${task.title}" es a las ${task.time}`);
+                }
+
+            });
+        })
+        .catch(error => console.error('Error checking reminders:', error));
+}
+</script>
 
 </body>
-
 </html>

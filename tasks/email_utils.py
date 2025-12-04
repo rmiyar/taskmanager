@@ -1,22 +1,17 @@
 from django.core.mail import send_mail
 
-def enviar_recordatorio(usuario, tarea):
-    asunto = f"Recordatorio: {tarea.title}"
-    mensaje = f"""
-Hola {usuario.username},
+def enviar_recordatorio(nombre_usuario, task):
+    asunto = "Recordatorio de tarea"
+    mensaje = (
+        f"Hola {nombre_usuario},\n\n"
+        f"Tu tarea '{task.title}' está por vencer a las {task.time.strftime('%I:%M %p')}.\n\n"
+        "TaskMaster"
+    )
 
-📝 Recordatorio de tarea próxima:
-
-Título: {tarea.title}
-Fecha: {tarea.date}
-Hora: {tarea.time.strftime('%H:%M')}
-
-TaskMaster
-"""
     send_mail(
         asunto,
         mensaje,
-        None,  # DEFAULT_FROM_EMAIL
-        [usuario.email], 
-        fail_silently=False
+        'taskmaster@noreply.com',  # remitente
+        [task.user.email],        # destinatario real
+        fail_silently=False,
     )

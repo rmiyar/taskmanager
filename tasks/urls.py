@@ -8,8 +8,7 @@ urlpatterns = [
     path('perfil/', views.edit_profile, name='edit_profile'),
     path('calendario/', views.calendar_view, name='calendar_view'),
     path('recordatorios/', views.reminders, name='reminders'),
-    path('api/check_reminders/', views.check_due_tasks, name='check_reminders'),
-    path("recordatorios/probar-correo/", views.test_email, name="test_email"),
+    path('api/check-due-tasks/', views.check_due_tasks, name='check_due_tasks'),
 
 
 

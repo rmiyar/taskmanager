@@ -7,7 +7,7 @@ import calendar
 from datetime import date, datetime, timedelta
 from .models import Task, ReminderSettings
 from .forms import TaskForm
-from .email_utils import enviar_recordatorio   # 👈 INTEGRADO AQUÍ
+from .email_utils import enviar_recordatorio 
 
 
 @login_required
@@ -130,8 +130,9 @@ def reminders(request):
 
     if request.method == 'POST':
         # Booleanos
-        settings.push_notifications = request.POST.get('push_notifications') == 'Activadas'
-        settings.email_notifications = request.POST.get('email_notifications') == 'Activadas'
+        settings.push_notifications = request.POST.get('push_notifications') == '1'
+        settings.email_notifications = request.POST.get('email_notifications') == '1'
+
 
         # Tiempo recordatorio
         settings.reminder_time = int(request.POST.get('reminder_time'))
@@ -186,41 +187,23 @@ def check_due_tasks(request):
         user=request.user,
         date=target_date,
         time__range=(start_window.time(), end_window.time()),
-        completed=False
+        completed=False,
+        reminder_sent=False 
     )
 
     task_list = []
 
     #  ENVÍO DE CORREO INTEGRADO
-    for t in tasks:
-        task_list.append({'title': t.title, 'time': t.time.strftime('%H:%M')})
+    task_list = [{'title': t.title, 'time': t.time.strftime('%I:%M %p')} for t in tasks]
+    # Construir el nombre que se usará en el correo
+    nombre_usuario = request.user.first_name if request.user.first_name else request.user.username
 
-        # Si email notifications está activado → Enviar correo
+    for t in tasks:
+
         if settings.email_notifications:
-            enviar_recordatorio(request.user, t)
+            enviar_recordatorio(nombre_usuario, t)
+
+        t.reminder_sent = True
+        t.save()
 
     return JsonResponse({'tasks': task_list})
-
-
-
-@login_required
-def test_email(request):
-    try:
-        settings = request.user.reminder_settings
-    except ReminderSettings.DoesNotExist:
-        messages.error(request, "Primero configura tus recordatorios.")
-        return redirect('reminders')
-
-    # Simular UNA tarea ficticia
-    class DummyTask:
-        title = "Correo de prueba"
-        date = date.today()
-        time = datetime.now().time()
-
-    dummy = DummyTask()
-
-    # Enviar el correo usando tu función real
-    enviar_recordatorio(request.user, dummy)
-
-    messages.success(request, "Correo de prueba enviado. Revisa la consola del servidor.")
-    return redirect('reminders')
